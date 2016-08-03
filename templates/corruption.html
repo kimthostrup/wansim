@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+  <!-- Page Heading -->
+
+  <div class="row">
+      <div class="col-lg-12 text-center">
+          <h1 class="page-header">
+              Packet Corruption Settings
+          </h1>
+      </div>
+  </div>
+  <!-- /.row -->
+
+
+  <form action="{{ url_for('tc_corruption_set') }}" method="post" role="form">
+    <div class="form-group">
+      <label for="cor">Packet Loss in %:</label>
+      <input type="number" class="form-control" name="cor" id="cor" value="{{ corruption }}" step="any">
+      <input id="corruption" data-slider-id='corruption-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ corruption }}"/>
+    </div>
+    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+  </form>
+  <form action="{{ url_for('tc_corruption_reset') }}" method="post" role="form">
+    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+  </form>
+
+  <script type="text/javascript">
+    var corval = 0;
+
+    window.onload = function () {
+      var corSlider = $('#corruption').slider({
+      	formatter: function(value) {
+          if (value != corval) {
+            //console.log('Current value: ' + value);
+            corval = value;
+            $("#cor").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+
+      $("#cor").on("change paste keyup", function() {
+        var val = parseFloat($("#cor").val());
+        corSlider.slider("setValue", val);
+      });
+    };
+  </script>
+
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block body %}
+  <!-- Page Heading -->
+
+  <div class="row">
+      <div class="col-lg-12 text-center">
+          <h1 class="page-header">
+              Packet Loss Settings
+          </h1>
+      </div>
+  </div>
+  <!-- /.row -->
+
+
+  <form action="{{ url_for('tc_loss_set') }}" method="post" role="form">
+    <div class="form-group">
+      <label for="lo">Packet Loss in %:</label>
+      <input type="number" class="form-control" name="lo" id="lo" value="{{ loss }}" step="any">
+      <input id="loss" data-slider-id='loss-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ loss }}"/>
+    </div>
+    <div class="form-group">
+      <label for="co">Correlation in %:</label>
+      <input type="number" class="form-control" name="co" id="co" value="{{ correlation }}">
+      <input id="correlation" data-slider-id='correlation-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ correlation }}"/>
+    </div>
+    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+  </form>
+  <form action="{{ url_for('tc_loss_reset') }}" method="post" role="form">
+    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+  </form>
+
+  <script type="text/javascript">
+    var loval = 0;
+    var coval = 0;
+
+    window.onload = function () {
+      var loSlider = $('#loss').slider({
+      	formatter: function(value) {
+          if (value != loval) {
+            //console.log('Current value: ' + value);
+            loval = value;
+            $("#lo").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+      var coSlider = $('#correlation').slider({
+      	formatter: function(value) {
+          if (value != coval) {
+            //console.log('Current value: ' + value);
+            coval = value;
+            $("#co").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+
+      $("#lo").on("change paste keyup", function() {
+        var val = parseFloat($("#lo").val());
+        loSlider.slider("setValue", val);
+      });
+      $("#co").on("change paste keyup", function() {
+        var val = parseInt($("#co").val());
+        coSlider.slider("setValue", val);
+      });
+    };
+  </script>
+
+{% endblock %}

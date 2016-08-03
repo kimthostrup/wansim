@@ -5,7 +5,7 @@
   <div class="row">
       <div class="col-lg-12 text-center">
           <h1 class="page-header">
-              Slider
+              Latency Settings
           </h1>
       </div>
   </div>
@@ -15,18 +15,18 @@
   <form action="{{ url_for('tc_latency_set') }}" method="post" role="form">
     <div class="form-group">
       <label for="lc">Latency in ms:</label>
-      <input type="number" class="form-control" name="lc" id="lc" value="0">
-      <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="0"/>
+      <input type="number" class="form-control" name="lc" id="lc" value="{{ latency }}">
+      <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="{{ latency }}"/>
     </div>
     <div class="form-group">
       <label for="va">Variation in ms:</label>
-      <input type="number" class="form-control" name="va" id="va" value="0">
-      <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="0"/>
+      <input type="number" class="form-control" name="va" id="va" value="{{ variation }}">
+      <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="{{ variation }}"/>
     </div>
     <div class="form-group">
       <label for="va">Approximation in %:</label>
-      <input type="number" class="form-control" name="app" id="app" value="0">
-      <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="0"/>
+      <input type="number" class="form-control" name="app" id="app" value="{{ approx }}">
+      <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ approx }}"/>
     </div>
     <button type="submit" class="btn btn-primary" value="Share">Create</button>
   </form>

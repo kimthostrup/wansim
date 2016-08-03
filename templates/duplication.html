@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+  <!-- Page Heading -->
+
+  <div class="row">
+      <div class="col-lg-12 text-center">
+          <h1 class="page-header">
+              Packet Duplication Settings
+          </h1>
+      </div>
+  </div>
+  <!-- /.row -->
+
+
+  <form action="{{ url_for('tc_duplication_set') }}" method="post" role="form">
+    <div class="form-group">
+      <label for="dup">Packet Duplication in %:</label>
+      <input type="number" class="form-control" name="dup" id="dup" value="{{ duplication }}">
+      <input id="duplication" data-slider-id='duplication-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ duplication }}"/>
+    </div>
+    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+  </form>
+  <form action="{{ url_for('tc_duplication_reset') }}" method="post" role="form">
+    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+  </form>
+
+  <script type="text/javascript">
+    var dupval = 0;
+
+    window.onload = function () {
+      var dupSlider = $('#duplication').slider({
+      	formatter: function(value) {
+          if (value != dupval) {
+            //console.log('Current value: ' + value);
+            dupval = value;
+            $("#dup").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+
+      $("#dup").on("change paste keyup", function() {
+        var val = parseFloat($("#dup").val());
+        dupSlider.slider("setValue", val);
+      });
+    };
+  </script>
+
+{% endblock %}
