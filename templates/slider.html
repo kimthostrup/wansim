@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block body %}
+  <!-- Page Heading -->
+
+  <div class="row">
+      <div class="col-lg-12 text-center">
+          <h1 class="page-header">
+              Slider
+          </h1>
+      </div>
+  </div>
+  <!-- /.row -->
+
+
+  <form action="{{ url_for('tc_latency_set') }}" method="post" role="form">
+    <div class="form-group">
+      <label for="lc">Latency in ms:</label>
+      <input type="number" class="form-control" name="lc" id="lc" value="0">
+      <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="0"/>
+    </div>
+    <div class="form-group">
+      <label for="va">Variation in ms:</label>
+      <input type="number" class="form-control" name="va" id="va" value="0">
+      <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="0"/>
+    </div>
+    <div class="form-group">
+      <label for="va">Approximation in %:</label>
+      <input type="number" class="form-control" name="app" id="app" value="0">
+      <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="0"/>
+    </div>
+    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+  </form>
+  <form action="{{ url_for('tc_latency_reset') }}" method="post" role="form">
+    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+  </form>
+
+  <script type="text/javascript">
+    var latval = 0;
+    var vaval = 0;
+    var appval = 0;
+
+    window.onload = function () {
+      var latSlider = $('#latency').slider({
+      	formatter: function(value) {
+          if (value != latval) {
+            //console.log('Current value: ' + value);
+            latval = value;
+            $("#lc").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+      var vaSlider = $('#variation').slider({
+      	formatter: function(value) {
+          if (value != vaval) {
+            //console.log('Current value: ' + value);
+            vaval = value;
+            $("#va").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+      var appSlider = $('#approx').slider({
+      	formatter: function(value) {
+          if (value != appval) {
+            //console.log('Current value: ' + value);
+            appval = value;
+            $("#app").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
+
+      $("#lc").on("change paste keyup", function() {
+        var val = parseInt($("#lc").val());
+        latSlider.slider("setValue", val);
+      });
+      $("#va").on("change paste keyup", function() {
+        var val = parseInt($("#va").val());
+        vaSlider.slider("setValue", val);
+      });
+      $("#app").on("change paste keyup", function() {
+        var val = parseInt($("#app").val());
+        appSlider.slider("setValue", val);
+      });
+    };
+  </script>
+
+{% endblock %}

@@ -2,7 +2,8 @@
 
 {% set navigation_bar = [
   ('/create', 'create', 'Create'),
-  ('/delete_bridge', 'delete_bridge', 'Delete')
+  ('/delete_bridge', 'delete_bridge', 'Delete'),
+  ('/slider', 'slider', 'Slider')
 ] -%}
 
 <!DOCTYPE html>
@@ -20,22 +21,33 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Bootstrap Slider CSS https://github.com/seiyria/bootstrap-slider -->
+    <link href="{{ url_for('static', filename='css/bootstrap-slider.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <style>
       .btn span.glyphicon {
         opacity: 0;
         }
         .btn.active span.glyphicon {
         opacity: 1;
-        }
-    </style>
-
-    <!-- Custom CSS -->
-    <style>
-    body {
+      }
+      body {
         padding-top: 70px;
         /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
-    }
+      }
     </style>
+
+
+    <!-- jQuery Version 1.11.1 -->
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <!-- Bootstrap Slider JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap-slider.min.js') }}"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -81,13 +93,6 @@
 
     </div>
     <!-- /.container -->
-
-    <!-- jQuery Version 1.11.1 -->
-    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
 
 </body>
 
