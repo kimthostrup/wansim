@@ -12,23 +12,35 @@
   <!-- /.row -->
 
 
-  <form action="{{ url_for('tc_loss_set') }}" method="post" role="form">
+  <form class="form-horizontal" action="{{ url_for('tc_loss') }}" method="post" role="form">
     <div class="form-group">
-      <label for="lo">Packet Loss in %:</label>
-      <input type="number" class="form-control" name="lo" id="lo" value="{{ loss }}" step="any">
-      <input id="loss" data-slider-id='loss-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ loss }}"/>
+      <label for="lo" class="col-sm-4 control-label">Packet Loss in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="lo" id="lo" value="{{ loss }}" step="any">
+      </div>
+      <div class="col-sm-6">
+        <input id="loss" data-slider-id='loss-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ loss }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
     <div class="form-group">
-      <label for="co">Correlation in %:</label>
-      <input type="number" class="form-control" name="co" id="co" value="{{ correlation }}">
-      <input id="correlation" data-slider-id='correlation-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ correlation }}"/>
+      <label for="co" class="col-sm-4 control-label">Correlation in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="co" id="co" value="{{ correlation }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="correlation" data-slider-id='correlation-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ correlation }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+    <div class="form-group">
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Set</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Reset</button>
+      </div>
+    </div>
   </form>
-  <form action="{{ url_for('tc_loss_reset') }}" method="post" role="form">
-    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
-  </form>
-
+  
   <script type="text/javascript">
     var loval = 0;
     var coval = 0;

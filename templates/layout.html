@@ -1,12 +1,11 @@
 <!-- source: https://startbootstrap.com/template-overviews/bare/ -->
 
 {% set navigation_bar = [
-  ('/create', 'create', 'Create'),
-  ('/delete_bridge', 'delete_bridge', 'Delete'),
+  ('/bridge', 'bridge', 'Bridge'),
   ('/latency', 'latency', 'Latency'),
-  ('/loss', 'loss', 'Packet Loss'),
-  ('/duplication', 'duplication', 'Packet Duplication'),
-  ('/corruption', 'corruption', 'Packet Corruption')
+  ('/loss', 'loss', 'Loss'),
+  ('/duplication', 'duplication', 'Duplication'),
+  ('/corruption', 'corruption', 'Corruption')
 ] -%}
 
 <!DOCTYPE html>
@@ -20,7 +19,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Bare - Start Bootstrap Template</title>
+    <title>WAN-SIM</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -40,6 +39,57 @@
         padding-top: 70px;
         /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
       }
+      .slider {
+        margin-left: 3%;
+        margin-right: 3%;
+        margin-top: 6px;
+      }
+      .slider.slider-horizontal {
+        width: 94%;
+      }
+      .slider-selection {
+      	background: #a6a6a6;
+      }
+      .slider-track-high {
+	      background: #e6e6e6;
+      }
+/*
+      @media (max-width: 801px) {
+          .navbar-header {
+              float: none;
+          }
+          .navbar-left,.navbar-right {
+              float: none !important;
+          }
+          .navbar-toggle {
+              display: block;
+          }
+          .navbar-collapse {
+              border-top: 1px solid transparent;
+              box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+          }
+          .navbar-fixed-top {
+      		top: 0;
+      		border-width: 0 0 1px;
+      	}
+          .navbar-collapse.collapse {
+              display: none!important;
+          }
+          .navbar-nav {
+              float: none!important;
+      		margin-top: 7.5px;
+      	}
+      	.navbar-nav>li {
+              float: none;
+          }
+          .navbar-nav>li>a {
+              padding-top: 10px;
+              padding-bottom: 10px;
+          }
+          .collapse.in{
+        		display:block !important;
+      	}
+      }*/
     </style>
 
 
@@ -74,7 +124,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('homepage')}}">Start Bootstrap</a>
+                <a class="navbar-brand" href="{{ url_for('homepage')}}">Overview</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

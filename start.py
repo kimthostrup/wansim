@@ -104,92 +104,83 @@ def homepage():
         pass
     return render_template('index.html', currentBridges=currentBridges)
 
-@app.route('/create', methods=['GET'])
+@app.route('/bridge', methods=['GET'])
 def create():
-    return render_template('create.html', devs=getIfs())
+    return render_template('bridge.html', devs=getIfs())
 
-@app.route('/create_bridge', methods=['POST'])
-def create_bridge():
+@app.route('/brctl_bridge', methods=['POST'])
+def brctl_bridge():
     global br, brctl
-    check = request.form.getlist("check")
-    #print check
-    br = brctl.addbr("br0")
-    for interface in check:
-        br.addif(str(interface))
-    return redirect(url_for('homepage'))
-
-@app.route('/delete', methods=['GET'])
-def delete():
-    return render_template('create.html', devs=getIfs())
-
-@app.route('/delete_bridge', methods=['GET'])
-def delete_bridge():
-    global br, brctl
-    brctl.delbr("br0")
+    action = request.form["action"]
+    if (action == "set"):
+        check = request.form.getlist("check")
+        #print check
+        br = brctl.addbr("br0")
+        for interface in check:
+            br.addif(str(interface))
+    elif (action == "reset"):
+        brctl.delbr("br0")
     return redirect(url_for('homepage'))
 
 @app.route('/latency', methods=['GET'])
 def latency():
     return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox())
 
-@app.route('/tc/latency/set', methods=['POST'])
-def tc_latency_set():
-    latency = request.form["lc"]
-    variation = request.form["va"]
-    approx = request.form["app"]
-    netem.setLatency(latency, variation, approx)
-    return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox())
-
-@app.route('/tc/latency/reset', methods=['POST'])
-def tc_latency_reset():
-    netem.reInit()
+@app.route('/tc/latency', methods=['POST'])
+def tc_latency():
+    action = request.form["action"]
+    if (action == "set"):
+        latency = request.form["lc"]
+        variation = request.form["va"]
+        approx = request.form["app"]
+        netem.setLatency(latency, variation, approx)
+    elif (action == "reset"):
+        netem.reInit()
     return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox())
 
 @app.route('/loss', methods=['GET'])
 def loss():
     return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation())
 
-@app.route('/tc/loss/set', methods=['POST'])
-def tc_loss_set():
-    loss = request.form["lo"]
-    correlation = request.form["co"]
-    netem.setPacketLoss(loss, correlation)
-    return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation())
-
-@app.route('/tc/loss/reset', methods=['POST'])
-def tc_loss_reset():
-    netem.reInit()
+@app.route('/tc/loss', methods=['POST'])
+def tc_loss():
+    action = request.form["action"]
+    if (action == "set"):
+        loss = request.form["lo"]
+        correlation = request.form["co"]
+        netem.setPacketLoss(loss, correlation)
+    elif (action == "reset"):
+        netem.reInit()
     return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation())
 
 @app.route('/duplication', methods=['GET'])
 def duplication():
     return render_template('duplication.html', duplication=netem.getDuplication())
 
-@app.route('/tc/duplication/set', methods=['POST'])
-def tc_duplication_set():
-    duplication = request.form["dup"]
-    netem.setDuplication(duplication)
-    return render_template('duplication.html', duplication=netem.getDuplication())
-
-@app.route('/tc/duplication/reset', methods=['POST'])
-def tc_duplication_reset():
-    netem.reInit()
+@app.route('/tc/duplication', methods=['POST'])
+def tc_duplication():
+    action = request.form["action"]
+    if (action == "set"):
+        duplication = request.form["dup"]
+        netem.setDuplication(duplication)
+    elif (action == "reset"):
+        netem.reInit()
     return render_template('duplication.html', duplication=netem.getDuplication())
 
 @app.route('/corruption', methods=['GET'])
 def corruption():
     return render_template('corruption.html', corruption=netem.getCorruption())
 
-@app.route('/tc/corruption/set', methods=['POST'])
-def tc_corruption_set():
-    corruption = request.form["cor"]
-    netem.setCorruption(corruption)
+@app.route('/tc/corruption', methods=['POST'])
+def tc_corruption():
+    action = request.form["action"]
+    if (action == "set"):
+        corruption = request.form["cor"]
+        netem.setCorruption(corruption)
+    elif (action == "reset"):
+        netem.reInit()
     return render_template('corruption.html', corruption=netem.getCorruption())
 
-@app.route('/tc/corruption/reset', methods=['POST'])
-def tc_corruption_reset():
-    netem.reInit()
-    return render_template('corruption.html', corruption=netem.getCorruption())
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

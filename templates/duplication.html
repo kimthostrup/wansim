@@ -12,16 +12,24 @@
   <!-- /.row -->
 
 
-  <form action="{{ url_for('tc_duplication_set') }}" method="post" role="form">
+  <form class="form-horizontal" action="{{ url_for('tc_duplication') }}" method="post" role="form">
     <div class="form-group">
-      <label for="dup">Packet Duplication in %:</label>
-      <input type="number" class="form-control" name="dup" id="dup" value="{{ duplication }}">
-      <input id="duplication" data-slider-id='duplication-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ duplication }}"/>
+      <label for="dup" class="col-sm-4 control-label">Packet Duplication in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="dup" id="dup" value="{{ duplication }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="duplication" data-slider-id='duplication-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ duplication }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary" value="Share">Create</button>
-  </form>
-  <form action="{{ url_for('tc_duplication_reset') }}" method="post" role="form">
-    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+    <div class="form-group">
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Set</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Reset</button>
+      </div>
+    </div>
   </form>
 
   <script type="text/javascript">

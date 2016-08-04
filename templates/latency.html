@@ -12,26 +12,42 @@
   <!-- /.row -->
 
 
-  <form action="{{ url_for('tc_latency_set') }}" method="post" role="form">
+  <form class="form-horizontal" action="{{ url_for('tc_latency') }}" method="post" role="form">
     <div class="form-group">
-      <label for="lc">Latency in ms:</label>
-      <input type="number" class="form-control" name="lc" id="lc" value="{{ latency }}">
-      <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="{{ latency }}"/>
+      <label for="lc" class="col-sm-4 control-label">Latency in ms:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="lc" id="lc" value="{{ latency }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="{{ latency }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
     <div class="form-group">
-      <label for="va">Variation in ms:</label>
-      <input type="number" class="form-control" name="va" id="va" value="{{ variation }}">
-      <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="{{ variation }}"/>
+      <label for="va" class="col-sm-4 control-label">Variation in ms:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="va" id="va" value="{{ variation }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="{{ variation }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
     <div class="form-group">
-      <label for="va">Approximation in %:</label>
-      <input type="number" class="form-control" name="app" id="app" value="{{ approx }}">
-      <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ approx }}"/>
+      <label for="va" class="col-sm-4 control-label">Approximation in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="app" id="app" value="{{ approx }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ approx }}" data-slider-tooltip="hide"/>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary" value="Share">Create</button>
-  </form>
-  <form action="{{ url_for('tc_latency_reset') }}" method="post" role="form">
-    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
+    <div class="form-group">
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Set</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Reset</button>
+      </div>
+    </div>
   </form>
 
   <script type="text/javascript">

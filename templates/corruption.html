@@ -12,18 +12,25 @@
   <!-- /.row -->
 
 
-  <form action="{{ url_for('tc_corruption_set') }}" method="post" role="form">
+  <form class="form-horizontal" action="{{ url_for('tc_corruption') }}" method="post" role="form">
     <div class="form-group">
-      <label for="cor">Packet Loss in %:</label>
-      <input type="number" class="form-control" name="cor" id="cor" value="{{ corruption }}" step="any">
-      <input id="corruption" data-slider-id='corruption-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ corruption }}"/>
+      <label for="cor" class="col-sm-4 control-label">Packet Loss in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="cor" id="cor" value="{{ corruption }}" step="any">
+      </div>
+      <div class="col-sm-6">
+        <input id="corruption" data-slider-id='corruption-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ corruption }}"/>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary" value="Share">Create</button>
+    <div class="form-group">
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Set</button>
+      </div>
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Reset</button>
+      </div>
+    </div>
   </form>
-  <form action="{{ url_for('tc_corruption_reset') }}" method="post" role="form">
-    <button type="submit" class="btn btn-primary" value="Share">Reset</button>
-  </form>
-
   <script type="text/javascript">
     var corval = 0;
 
