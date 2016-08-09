@@ -53,6 +53,14 @@
       .slider-track-high {
 	      background: #e6e6e6;
       }
+
+      .tool-tip {
+        display: inline-block;
+      }
+
+      .tool-tip [disabled] {
+        pointer-events: none;
+      }
 /*
       @media (max-width: 801px) {
           .navbar-header {
@@ -130,8 +138,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                   {% for href, id, caption in navigation_bar %}
-                    <li{% if id == active_page %} class="active"{% endif
-                    %}><a href="{{ href|e }}"> {{ caption|e }}</a></li>
+                    <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}"> {{ caption|e }}</a></li>
                   {% endfor %}
                 </ul>
             </div>

@@ -7,39 +7,49 @@ import atexit
 
 # create our little application :)
 app = Flask(__name__)
+#app.config['DEBUG'] = True
 app.config.from_object(__name__)
 
 # single BridgeController Instance
 brctl = BridgeController()
 br = None
 netem = Netem("eth1")
+bridgeActive = False
 
 def cleanup():
     netem.removeAllRules()
-    brctl.delbr("br0")
+    currentBridges = brctl.showall()
+    if currentBridges:
+        try:
+            brctl.delbr(currentBridges[0])
+        except Exception as e:
+            print "brctl error: {0}".format(e)
 
 def getIfs():
     devs = netifaces.interfaces()
-    devs.remove('lo')
+    devs = [dev for dev in devs if "eth" in dev]
+    #print ", ".join(devs)
     return devs
 
 @app.route('/', methods=['GET'])
 def homepage():
-    currentBridges = brctl.showall()
+    currentBridge = brctl.showall()
+    if currentBridge:
+        currentBridge = currentBridge[0]
     #print currentBridges
-    if not currentBridges:
-        currentBridges = ["No Bridges currently available!"]
-    else:
-        pass
-    return render_template('index.html', currentBridges=currentBridges)
+    #if not currentBridges:
+    #    currentBridges = ["No Bridges currently available!"]
+    #else:
+    #    pass
+    return render_template('index.html', currentBridge=currentBridge)
 
 @app.route('/bridge', methods=['GET'])
 def create():
-    return render_template('bridge.html', devs=getIfs())
+    return render_template('bridge.html', devs=getIfs(), bridgeActive=bridgeActive)
 
 @app.route('/brctl_bridge', methods=['POST'])
 def brctl_bridge():
-    global br, brctl
+    global br, brctl, bridgeActive
     action = request.form["action"]
     if (action == "set"):
         check = request.form.getlist("check")
@@ -47,13 +57,15 @@ def brctl_bridge():
         br = brctl.addbr("br0")
         for interface in check:
             br.addif(str(interface))
+        bridgeActive = True
     elif (action == "reset"):
         brctl.delbr("br0")
+        bridgeActive = False
     return redirect(url_for('homepage'))
 
 @app.route('/latency', methods=['GET'])
 def latency():
-    return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox())
+    return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox(), bridgeActive=bridgeActive)
 
 @app.route('/tc/latency', methods=['POST'])
 def tc_latency():
@@ -71,11 +83,11 @@ def tc_latency():
         netem.setVariation(0)
         netem.setApprox(0)
         netem.changeQdisc()
-    return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox())
+    return render_template('latency.html', latency=netem.getLatency(), variation=netem.getVariation(), approx=netem.getApprox(), bridgeActive=bridgeActive)
 
 @app.route('/loss', methods=['GET'])
 def loss():
-    return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation())
+    return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation(), bridgeActive=bridgeActive)
 
 @app.route('/tc/loss', methods=['POST'])
 def tc_loss():
@@ -90,11 +102,11 @@ def tc_loss():
         netem.setLoss(0)
         netem.setCorrelation(0)
         netem.changeQdisc()
-    return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation())
+    return render_template('loss.html', loss=netem.getLoss(), correlation=netem.getCorrelation(), bridgeActive=bridgeActive)
 
 @app.route('/duplication', methods=['GET'])
 def duplication():
-    return render_template('duplication.html', duplication=netem.getDuplication())
+    return render_template('duplication.html', duplication=netem.getDuplication(), bridgeActive=bridgeActive)
 
 @app.route('/tc/duplication', methods=['POST'])
 def tc_duplication():
@@ -106,11 +118,11 @@ def tc_duplication():
     elif (action == "reset"):
         netem.setDuplication(0)
         netem.changeQdisc()
-    return render_template('duplication.html', duplication=netem.getDuplication())
+    return render_template('duplication.html', duplication=netem.getDuplication(), bridgeActive=bridgeActive)
 
 @app.route('/corruption', methods=['GET'])
 def corruption():
-    return render_template('corruption.html', corruption=netem.getCorruption())
+    return render_template('corruption.html', corruption=netem.getCorruption(), bridgeActive=bridgeActive)
 
 @app.route('/tc/corruption', methods=['POST'])
 def tc_corruption():
@@ -122,17 +134,16 @@ def tc_corruption():
     elif (action == "reset"):
         netem.setCorruption(0)
         netem.changeQdisc()
-    return render_template('corruption.html', corruption=netem.getCorruption())
+    return render_template('corruption.html', corruption=netem.getCorruption(), bridgeActive=bridgeActive)
 
-@app.route('/tc/reset', methods=['POST'])
+@app.route('/tc/reset', methods=['GET'])
 def tc_reset():
-    action = request.form["action"]
-    if (action == "confirm"):
-        netem.reInit()
+    netem.reInit()
     return redirect(url_for('homepage'))
 
 
 if __name__ == "__main__":
+    cleanup()
     app.run(host='0.0.0.0')
 
 atexit.register(cleanup)

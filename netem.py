@@ -1,11 +1,11 @@
 import subprocess
 
-
 def _runcmd(cmd, exception):
     """runs a shell command, raises proper exception if it failes"""
     c = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print c.wait()
     if c.wait() != 0:
+        stdout = c.communicate()[0]
+        print 'STDOUT:{}'.format(stdout)
         raise Exception(exception)
     return c
 
@@ -48,9 +48,10 @@ class Netem(object):
         return self.corruption
     def setCorruption(self, corruption):
         self.corruption = corruption
+    def rootTest(self):
+        _runcmd(["ls", "/root/"], "root test failed")
     def init(self):
         _runcmd(["tc", "qdisc", "add", "dev", self.ifname, "root", "netem", "delay", "0ms"], "Could not initialize netem on interface: " + self.ifname)
-
     def changeQdisc(self):
         cmdArr = [
             "tc", "qdisc", "change", "dev", str(self.ifname), "root", "netem",

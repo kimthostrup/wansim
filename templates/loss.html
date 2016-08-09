@@ -33,19 +33,35 @@
     </div>
     <div class="form-group">
       <div class="col-sm-6">
-        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Set</button>
+        {% if not bridgeActive %}
+          <span class="tool-tip btn-block" data-toggle="tooltip" data-placement="top" title="Please create a bridge">
+        {% endif %}
+            <button type="submit" class="btn btn-primary btn-block {% if not bridgeActive %}disabled{% endif %}" {% if not bridgeActive %}disabled{% endif %} name="action" value="set">Set</button>
+        {% if not bridgeActive %}
+          </span>
+        {% endif %}
       </div>
       <div class="col-sm-6">
-        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Reset</button>
+        {% if not bridgeActive %}
+          <span class="tool-tip btn-block" data-toggle="tooltip" data-placement="top" title="Please create a bridge">
+        {% endif %}
+            <button type="submit" class="btn btn-danger btn-block {% if not bridgeActive %}disabled{% endif %}" {% if not bridgeActive %}disabled{% endif %} name="action" value="reset">Reset</button>
+        {% if not bridgeActive %}
+          </span>
+        {% endif %}
       </div>
     </div>
   </form>
-  
+
   <script type="text/javascript">
     var loval = 0;
     var coval = 0;
 
     window.onload = function () {
+      if ("{{ bridgeActive }}" == "False"){
+        $('[data-toggle="tooltip"]').tooltip()
+      }
+
       var loSlider = $('#loss').slider({
       	formatter: function(value) {
           if (value != loval) {

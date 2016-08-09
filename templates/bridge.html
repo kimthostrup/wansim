@@ -26,11 +26,54 @@
     </div>
     <div class="form-group">
       <div class="col-sm-6">
-        <button type="submit" class="btn btn-primary btn-block" name="action" value="set">Create Bridge</button>
+        {% if bridgeActive %}
+          <span class="tool-tip btn-block" data-toggle="tooltip2" data-placement="top" title="Cannot create two bridges at the same time">
+        {% endif %}
+            <button type="submit" class="btn btn-primary btn-block {% if bridgeActive %}disabled{% endif %}" {% if bridgeActive %}disabled{% endif %} name="action" value="set">Create Bridge</button>
+        {% if bridgeActive %}
+          </span>
+        {% endif %}
       </div>
       <div class="col-sm-6">
-        <button type="submit" class="btn btn-danger btn-block" name="action" value="reset">Delete Bridge</button>
+        {% if not bridgeActive %}
+          <span class="tool-tip btn-block" data-toggle="tooltip" data-placement="top" title="No bridge configured">
+        {% endif %}
+            <button type="button" class="btn btn-danger btn-block {% if not bridgeActive %}disabled{% endif %}" {% if not bridgeActive %}disabled{% endif %} data-toggle="modal" data-target="#delBridgeModal">
+              Delete Bridge
+            </button>
+            <div class="modal fade" id="delBridgeModal" tabindex="-1" role="dialog" aria-labelledby="delBridgeModal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="delBridgeModal">Delete Bridge</h4>
+                  </div>
+                  <div class="modal-body">
+                    This will delete the current Bridge and reset all connaction settings.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger" name="action" value="reset">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% if not bridgeActive %}
+          </span>
+        {% endif %}
       </div>
     </div>
   </form>
+
+  <script type="text/javascript">
+    window.onload = function () {
+      console.log("dis?: {{ bridgeActive }}");
+      if ("{{ bridgeActive }}" == "False"){
+        $('[data-toggle="tooltip"]').tooltip()
+      }
+      if ("{{ bridgeActive }}" == "True"){
+        $('[data-toggle="tooltip2"]').tooltip()
+      }
+    };
+  </script>
 {% endblock %}

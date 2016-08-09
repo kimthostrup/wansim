@@ -12,18 +12,11 @@
   <!-- /.row -->
 
   <ul class="list-unstyled">
-    {% for bridge in currentBridges %}
-    <li>{{ bridge }}</li>
-    {% endfor %}
+    {% if currentBridge %}
+      <li>Current Bridge: {{ currentBridge }}</li>
+    {% else %}
+      <li>No Bridge currently available!</li>
+    {% endif %}
   </ul>
-
-  <script>
-    // With JQuery
-    $('#ex1').slider({
-    	formatter: function(value) {
-    		return 'Current value: ' + value;
-    	}
-    });
-  </script>
 
 {% endblock %}
