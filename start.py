@@ -2,6 +2,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, current_app, jsonify
 from pybrctl import BridgeController
 from netem import Netem
+import psutil
 import netifaces
 import atexit
 
@@ -12,12 +13,14 @@ app.config.from_object(__name__)
 
 # single BridgeController Instance
 brctl = BridgeController()
+brname = "br0"
 br = None
-netem = Netem("eth1")
+netem = None
 bridgeActive = False
 
 def cleanup():
-    netem.removeAllRules()
+    if netem:
+        netem.removeAllRules()
     currentBridges = brctl.showall()
     if currentBridges:
         try:
@@ -34,14 +37,20 @@ def getIfs():
 @app.route('/', methods=['GET'])
 def homepage():
     currentBridge = brctl.showall()
+    statsBridge = None
     if currentBridge:
         currentBridge = currentBridge[0]
+        statsBridge = psutil.net_io_counters(True).get(brname)
+        print statsBridge
     #print currentBridges
     #if not currentBridges:
     #    currentBridges = ["No Bridges currently available!"]
     #else:
     #    pass
-    return render_template('index.html', currentBridge=currentBridge)
+    bridgedIfs = None
+    if br:
+        bridgedIfs = brctl.getbr(br).getifs()
+    return render_template('index.html', currentBridge=currentBridge, bridgedIfs=bridgedIfs, statsBridge=statsBridge)
 
 @app.route('/bridge', methods=['GET'])
 def create():
@@ -54,12 +63,13 @@ def brctl_bridge():
     if (action == "set"):
         check = request.form.getlist("check")
         #print check
-        br = brctl.addbr("br0")
+        br = brctl.addbr(brname)
         for interface in check:
             br.addif(str(interface))
+        netem = Netem(brname)
         bridgeActive = True
     elif (action == "reset"):
-        brctl.delbr("br0")
+        brctl.delbr(brname)
         bridgeActive = False
     return redirect(url_for('homepage'))
 

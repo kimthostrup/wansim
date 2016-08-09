@@ -14,6 +14,11 @@
   <ul class="list-unstyled">
     {% if currentBridge %}
       <li>Current Bridge: {{ currentBridge }}</li>
+      <li>Contained Interfaces: {% for if in bridgedIfs %} {{ if }}, {% endfor %}</li>
+      <li>Network Stats:</li>
+      {% for stat in statsBridge %}
+        <li> {{ stat }} </li>
+      {% endfor %}
     {% else %}
       <li>No Bridge currently available!</li>
     {% endif %}
