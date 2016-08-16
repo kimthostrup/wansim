@@ -1,5 +1,6 @@
 import subprocess
 
+# runs a command(cmd expected as array) in the shell, raises Exception if command fails
 def _runcmd(cmd, exception):
     """runs a shell command, raises proper exception if it failes"""
     c = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -9,6 +10,7 @@ def _runcmd(cmd, exception):
         raise Exception(exception)
     return c
 
+# Netem Class to manipulate a network connection
 class Netem(object):
     def __init__(self, ifname, latency=0, variation=0, approx=0, loss=0, correlation=0, duplication=0, corruption=0):
         self.ifname = ifname
@@ -19,7 +21,9 @@ class Netem(object):
         self.correlation = correlation
         self.duplication = duplication
         self.corruption = corruption
-        self.init()
+        #self.init()
+    def getIfName(self):
+        return self.ifname
     def getLatency(self):
         return self.latency
     def setLatency(self, latency):
@@ -48,10 +52,10 @@ class Netem(object):
         return self.corruption
     def setCorruption(self, corruption):
         self.corruption = corruption
-    def rootTest(self):
-        _runcmd(["ls", "/root/"], "root test failed")
+    # init, has to be run once after initialisation
     def init(self):
         _runcmd(["tc", "qdisc", "add", "dev", self.ifname, "root", "netem", "delay", "0ms"], "Could not initialize netem on interface: " + self.ifname)
+    # after the init, every setting set with set functions can be applied with changeQdisc
     def changeQdisc(self):
         cmdArr = [
             "tc", "qdisc", "change", "dev", str(self.ifname), "root", "netem",
@@ -61,7 +65,7 @@ class Netem(object):
             "corrupt", str(self.corruption) + "%"
         ]
         _runcmd(cmdArr, "Could not apply changes on interface: " + self.ifname + "\ncommand: " + " ".join(cmdArr))
-
+    # resets all rules and removes them in the shell
     def removeAllRules(self):
         self.latency = 0
         self.variation = 0
@@ -71,6 +75,7 @@ class Netem(object):
         self.duplication = 0
         self.corruption = 0
         _runcmd(["tc", "qdisc", "del", "dev", self.ifname, "root", "netem"], "Could not remove netem rules of interface: " + self.ifname)
+    # complete re-initialisation
     def reInit(self):
         self.removeAllRules()
         self.init()
