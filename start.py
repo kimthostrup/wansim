@@ -20,6 +20,7 @@ brname = "br0"          # name of the to be bridge
 br = None               # the bridge object created from the bridge controller
 tc = Tc("lo")     # default init to loopback device
 bridgeActive = False    # flag if bridge is active
+statsOnInit = None
 
 ################ HELPERS ################
 
@@ -50,16 +51,28 @@ def getIfs():
 # main entry of the webinterface
 @app.route('/', methods=['GET'])
 def homepage():
+    global statsOnInit
     currentBridge = brctl.showall()
-    statsBridge = None
+    kbytes_sent=0
+    kbytes_recv=0
+    packets_sent=0
+    packets_recv=0
+    error=0
+    drop=0
     if currentBridge:
         currentBridge = currentBridge[0]
-        statsBridge = psutil.net_io_counters(True).get(br.getifs()[-1])
-        print statsBridge
+        currentStats = psutil.net_io_counters(True).get(br.getifs()[0])
+        kbytes_sent = (currentStats.bytes_sent - statsOnInit.bytes_sent) / 1024
+        kbytes_recv = (currentStats.bytes_recv - statsOnInit.bytes_recv) / 1024
+        packets_sent = (currentStats.packets_sent - statsOnInit.packets_sent)
+        packets_recv = (currentStats.packets_recv - statsOnInit.packets_recv)
+        error = currentStats.errin + currentStats.errout - statsOnInit.errin - statsOnInit.errout
+        drop = currentStats.dropin + currentStats.dropout - statsOnInit.dropin - statsOnInit.dropout
     bridgedIfs = None
     if br:
         bridgedIfs = br.getifs()
-    return render_template('index.html', currentBridge=currentBridge, bridgedIfs=bridgedIfs, statsBridge=statsBridge)
+    return render_template('index.html', currentBridge=currentBridge, bridgedIfs=bridgedIfs, kbytes_sent=kbytes_sent, kbytes_recv=kbytes_recv,
+        packets_sent=packets_sent, packets_recv=packets_recv, error=error, drop=drop)
 
 # route to bridge creation
 @app.route('/bridge', methods=['GET'])
@@ -69,7 +82,7 @@ def create():
 # route to create a bridge with given interfaces
 @app.route('/brctl_bridge', methods=['POST'])
 def brctl_bridge():
-    global br, brctl, bridgeActive, tc
+    global br, brctl, bridgeActive, tc, statsOnInit
     action = request.form["action"]
     if (action == "set"):
         check = request.form.getlist("check")
@@ -78,6 +91,7 @@ def brctl_bridge():
         for interface in check:
             br.addif(str(interface))
         tc = Tc(br.getifs()[0])
+        statsOnInit = psutil.net_io_counters(True).get(br.getifs()[0])
         bridgeActive = True
     elif (action == "reset"):
         brctl.delbr(brname)

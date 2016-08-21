@@ -16,9 +16,17 @@
       <li>Current Bridge: {{ currentBridge }}</li>
       <li>Contained Interfaces: {% for if in bridgedIfs %} {{ if }}, {% endfor %}</li>
       <li>Network Stats:</li>
-      {% for stat in statsBridge %}
-        <li> {{ stat }} </li>
-      {% endfor %}
+      <li>Kilobytes sent: {{ kbytes_sent }}kb</li>
+      <li>Kilobytes recieved: {{ kbytes_recv }}kb</li>
+      <li>Packets sent: {{ packets_sent }}</li>
+      <li>Packets recieved: {{ packets_recv }}</li>
+      <li>Errors total: {{ error }}</li>
+      <li>Dropped packets total: {{ drop }}</li>
+      <script>
+        setTimeout(function(){
+           window.location.reload(1);
+        }, 5000);
+      </script>
     {% else %}
       <li>No Bridge currently available!</li>
     {% endif %}
