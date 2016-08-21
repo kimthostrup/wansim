@@ -5,30 +5,30 @@
   <div class="row">
       <div class="col-lg-12 text-center">
           <h1 class="page-header">
-              Packet Corruption Settings
+              Up/Down Speed Settings
           </h1>
       </div>
   </div>
   <!-- /.row -->
 
 
-  <form class="form-horizontal" action="{{ url_for('tc_corruption') }}" method="post" role="form">
+  <form class="form-horizontal" action="{{ url_for('tc_speed') }}" method="post" role="form">
     <div class="form-group">
-      <label for="cor" class="col-sm-4 control-label">Packet Loss in %:</label>
+      <label for="lo" class="col-sm-4 control-label">Up Speed in kbit:</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" name="cor" id="cor" value="{{ corruption }}" step="any">
+        <input type="number" class="form-control" name="up" id="up" value="{{ up }}" step="any">
       </div>
       <div class="col-sm-6">
-        <input id="corruption" data-slider-id='corruption-slider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="{{ corruption }}"/>
+        <input id="slup" data-slider-id='up-slider' type="number" data-slider-min="0" data-slider-max="10000" data-slider-step="100" data-slider-value="{{ up }}" data-slider-tooltip="hide"/>
       </div>
     </div>
     <div class="form-group">
-      <label for="ccorr" class="col-sm-4 control-label">Correlation in %:</label>
+      <label for="down" class="col-sm-4 control-label">Down Speed in kbit:</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" name="ccorr" id="ccorr" value="{{ ccorr }}">
+        <input type="number" class="form-control" name="down" id="down" value="{{ down }}">
       </div>
       <div class="col-sm-6">
-        <input id="corr" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ ccorr }}" data-slider-tooltip="hide"/>
+        <input id="sldown" data-slider-id='down-slider' type="number" data-slider-min="0" data-slider-max="10000" data-slider-step="100" data-slider-value="{{ down }}" data-slider-tooltip="hide"/>
       </div>
     </div>
     <div class="form-group">
@@ -52,43 +52,44 @@
       </div>
     </div>
   </form>
+
   <script type="text/javascript">
-    var corval = 0;
-    var coval = 0; //correlation
+    var upval = 0;
+    var downval = 0;
 
     window.onload = function () {
       if ("{{ bridgeActive }}" == "False"){
         $('[data-toggle="tooltip"]').tooltip()
       }
 
-      var corSlider = $('#corruption').slider({
+      var upSlider = $('#slup').slider({
       	formatter: function(value) {
-          if (value != corval) {
+          if (value != upval) {
             //console.log('Current value: ' + value);
-            corval = value;
-            $("#cor").val(value);
+            upval = value;
+            $("#up").val(value);
           }
       		return 'Current value: ' + value;
       	}
       });
-      var corrSlider = $('#corr').slider({
+      var downSlider = $('#sldown').slider({
       	formatter: function(value) {
-          if (value != coval) {
+          if (value != downval) {
             //console.log('Current value: ' + value);
-            coval = value;
-            $("#ccorr").val(value);
+            downval = value;
+            $("#down").val(value);
           }
       		return 'Current value: ' + value;
       	}
       });
 
-      $("#cor").on("change paste keyup", function() {
-        var val = parseFloat($("#cor").val());
-        corSlider.slider("setValue", val);
+      $("#up").on("change paste keyup", function() {
+        var val = parseFloat($("#up").val());
+        upSlider.slider("setValue", val);
       });
-      $("#ccorr").on("change paste keyup", function() {
-        var val = parseInt($("#ccorr").val());
-        corrSlider.slider("setValue", val);
+      $("#down").on("change paste keyup", function() {
+        var val = parseInt($("#down").val());
+        downSlider.slider("setValue", val);
       });
     };
   </script>

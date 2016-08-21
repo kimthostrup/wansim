@@ -14,30 +14,30 @@
 
   <form class="form-horizontal" action="{{ url_for('tc_latency') }}" method="post" role="form">
     <div class="form-group">
-      <label for="lc" class="col-sm-4 control-label">Latency in ms:</label>
+      <label for="lc" class="col-sm-4 control-label">Delay in ms:</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" name="lc" id="lc" value="{{ latency }}">
+        <input type="number" class="form-control" name="lc" id="lc" value="{{ delay }}">
       </div>
       <div class="col-sm-6">
-        <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="{{ latency }}" data-slider-tooltip="hide"/>
+        <input id="latency" data-slider-id='latency-slider' type="number" data-slider-min="0" data-slider-max="2000" data-slider-step="50" data-slider-value="{{ delay }}" data-slider-tooltip="hide"/>
       </div>
     </div>
     <div class="form-group">
-      <label for="va" class="col-sm-4 control-label">Variation in ms:</label>
+      <label for="va" class="col-sm-4 control-label">Jitter in ms:</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" name="va" id="va" value="{{ variation }}">
+        <input type="number" class="form-control" name="va" id="va" value="{{ jitter }}">
       </div>
       <div class="col-sm-6">
-        <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="{{ variation }}" data-slider-tooltip="hide"/>
+        <input id="variation" data-slider-id='variation-slider' type="number" data-slider-min="0" data-slider-max="250" data-slider-step="25" data-slider-value="{{ jitter }}" data-slider-tooltip="hide"/>
       </div>
     </div>
     <div class="form-group">
-      <label for="va" class="col-sm-4 control-label">Approximation in %:</label>
+      <label for="va" class="col-sm-4 control-label">Correlation in %:</label>
       <div class="col-sm-2">
-        <input type="number" class="form-control" name="app" id="app" value="{{ approx }}">
+        <input type="number" class="form-control" name="app" id="app" value="{{ delcorr }}">
       </div>
       <div class="col-sm-6">
-        <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ approx }}" data-slider-tooltip="hide"/>
+        <input id="approx" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ delcorr }}" data-slider-tooltip="hide"/>
       </div>
     </div>
     <div class="form-group">

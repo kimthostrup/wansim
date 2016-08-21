@@ -1,0 +1,64 @@
+#!/bin/bash
+
+###### uplink
+
+# install root CBQ
+
+tc qdisc add dev eth0 root handle 1: cbq avpkt 1000 bandwidth 10mbit
+
+# shape everything at $USPEED speed - this prevents huge queues in your
+# DSL modem which destroy latency:
+# main class
+
+tc class add dev eth0 parent 1: classid 1:1 cbq rate 512kbit allot 1500 prio 5 bounded isolated
+
+# high prio class 1:10:
+
+tc class add dev eth0 parent 1:1 classid 1:10 cbq rate 512kbit allot 1600 prio 1 avpkt 1000
+
+# bulk and default class 1:20 - gets slightly less traffic,
+#  and a lower priority:
+
+tc class add dev eth0 parent 1:1 classid 1:20 cbq rate $[9*512/10]kbit allot 1600 prio 2 avpkt 1000
+
+
+# all get Stochastic Fairness:
+tc qdisc add dev eth0 parent 1:10 handle 10: netem delay 0ms 0ms 0% loss 0% 0% duplicate 0% 0% corrupt 0% 0%
+tc qdisc add dev eth0 parent 1:20 handle 20: netem delay 0ms 0ms 0% loss 0% 0% duplicate 0% 0% corrupt 0% 0%
+
+
+# start filters
+# TOS Minimum Delay (ssh, NOT scp) in 1:10:
+tc filter add dev eth0 parent 1: protocol ip prio 10 u32 match ip tos 0x10 0xff flowid 1:10
+
+# ICMP (ip protocol 1) in the interactive class 1:10 so we
+# can do measurements & impress our friends:
+tc filter add dev eth0 parent 1: protocol ip prio 11 u32 match ip protocol 1 0xff flowid 1:10
+
+# prioritize small packets (<64 bytes)
+
+tc filter add dev eth0 parent 1: protocol ip prio 12 u32 match ip protocol 6 0xff match u8 0x05 0x0f at 0 match u16 0x0000 0xffc0 at 2 flowid 1:10
+
+
+
+# rest is 'non-interactive' ie 'bulk' and ends up in 1:20
+
+tc filter add dev eth0 parent 1: protocol ip prio 18 u32 match ip dst 0.0.0.0/0 flowid 1:20
+
+
+########## downlink #############
+# slow downloads down to somewhat less than the real speed  to prevent
+# queuing at our ISP. Tune to see how high you can set it.
+# ISPs tend to have *huge* queues to make sure big downloads are fast
+#
+# attach ingress policer:
+
+tc qdisc add dev eth0 handle ffff: ingress
+
+# filter *everything* to it (0.0.0.0/0), drop everything that's
+# coming in too fast:
+
+tc filter add dev eth0 parent ffff: protocol ip prio 50 u32 match ip src 0.0.0.0/0 police rate 1024kbit burst 10k drop flowid :1
+
+
+echo "done"

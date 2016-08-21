@@ -23,6 +23,15 @@
       </div>
     </div>
     <div class="form-group">
+      <label for="dcorr" class="col-sm-4 control-label">Correlation in %:</label>
+      <div class="col-sm-2">
+        <input type="number" class="form-control" name="dcorr" id="dcorr" value="{{ dcorr }}">
+      </div>
+      <div class="col-sm-6">
+        <input id="corr" data-slider-id='approx-slider' type="number" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="{{ dcorr }}" data-slider-tooltip="hide"/>
+      </div>
+    </div>
+    <div class="form-group">
       <div class="col-sm-6">
         {% if not bridgeActive %}
           <span class="tool-tip btn-block" data-toggle="tooltip" data-placement="top" title="Please create a bridge">
@@ -46,6 +55,7 @@
 
   <script type="text/javascript">
     var dupval = 0;
+    var coval = 0; //correlation
 
     window.onload = function () {
       if ("{{ bridgeActive }}" == "False"){
@@ -62,10 +72,24 @@
       		return 'Current value: ' + value;
       	}
       });
+      var corrSlider = $('#corr').slider({
+      	formatter: function(value) {
+          if (value != coval) {
+            //console.log('Current value: ' + value);
+            coval = value;
+            $("#dcorr").val(value);
+          }
+      		return 'Current value: ' + value;
+      	}
+      });
 
       $("#dup").on("change paste keyup", function() {
         var val = parseFloat($("#dup").val());
         dupSlider.slider("setValue", val);
+      });
+      $("#dcorr").on("change paste keyup", function() {
+        var val = parseInt($("#dcorr").val());
+        corrSlider.slider("setValue", val);
       });
     };
   </script>
