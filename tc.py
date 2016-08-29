@@ -84,48 +84,22 @@ class Tc(object):
 
 
         if (self.up is not 0) :
-            # install root CBQ
-            _runcmd(["tc", "qdisc", "add", "dev", self.ifname, "root", "handle", "1:", "cbq", "avpkt", "1000", "bandwidth", "10mbit"])
+            _runcmd(["tc", "qdisc", "add", "dev", self.ifname, "root", "handle", "1:", "htb"])
 
-            # shape everything at $USPEED speed - this prevents huge queues in your
-            # DSL modem which destroy latency
-            _runcmd(["tc", "class", "add", "dev", self.ifname, "parent", "1:", "classid", "1:1", "cbq",
-                "rate", str(self.up) + "kbit", "allot", "1500", "prio", "5", "bounded", "isolated"])
+            _runcmd(["tc", "class", "add", "dev", self.ifname, "parent", "1:", "classid", "1:1", "htb",
+                "rate", str(self.up) + "kbit"])
 
-            # high prio class 1:10:
-            _runcmd(["tc", "class", "add", "dev", self.ifname, "parent", "1:1", "classid", "1:10", "cbq",
-                "rate", str(self.up) + "kbit", "allot", "1600", "prio", "1", "avpkt", "1000"])
+            _runcmd(["tc", "class", "add", "dev", self.ifname, "parent", "1:1", "classid", "1:11", "htb",
+                "rate", str(self.up) + "kbit"])
 
-            # bulk and default class 1:20 - gets slightly less traffic,
-            #  and a lower priority:
-            _runcmd(["tc", "class", "add", "dev", self.ifname, "parent", "1:1", "classid", "1:20", "cbq",
-                "rate", str(9*self.up/10) + "kbit", "allot", "1600", "prio", "2", "avpkt", "1000"])
+            # add netem modifiers
+            addNetem = ["tc", "qdisc", "add", "dev", self.ifname, "parent", "1:11", "handle", "10:"]
+            addNetem.extend(netemArr)
+            _runcmd(addNetem, "Could not apply changes on interface: " + self.ifname + "\ncommand: " + " ".join(addNetem))
 
-            # add netem modifiers to high prio and default
-            highprioArr = ["tc", "qdisc", "add", "dev", self.ifname, "parent", "1:10", "handle", "10:"]
-            highprioArr.extend(netemArr)
-            _runcmd(highprioArr, "Could not apply changes on interface: " + self.ifname + "\ncommand: " + " ".join(highprioArr))
-            defaultArr = ["tc", "qdisc", "add", "dev", self.ifname, "parent", "1:20", "handle", "20:"]
-            defaultArr.extend(netemArr)
-            _runcmd(defaultArr, "Could not apply changes on interface: " + self.ifname + "\ncommand: " + " ".join(defaultArr))
-
-            # start filters
-            # TOS Minimum Delay (ssh, NOT scp) in 1:10:
+            # start filter
             _runcmd(["tc", "filter", "add", "dev", self.ifname, "parent", "1:",
-                "protocol", "ip", "prio", "10", "u32", "match", "ip", "tos", "0x10", "0xff", "flowid", "1:10"])
-            # ICMP (ip protocol 1)
-            _runcmd(["tc", "filter", "add", "dev", self.ifname, "parent", "1:",
-                "protocol", "ip", "prio", "11", "u32", "match", "ip", "protocol", "1", "0xff", "flowid", "1:10"])
-            # prioritize small packets (<64 bytes)
-            _runcmd(["tc", "filter", "add", "dev", self.ifname, "parent", "1:",
-                "protocol", "ip", "prio", "12", "u32",
-                    "match", "ip", "protocol", "6", "0xff",
-                    "match", "u8", "0x05", "0x0f", "at", "0",
-                    "match", "u16", "0x0000", "0xffc0", "at", "2",
-                "flowid", "1:10"])
-            # default ends up here
-            _runcmd(["tc", "filter", "add", "dev", self.ifname, "parent", "1:",
-                "protocol", "ip", "prio", "18", "u32", "match", "ip", "dst", "0.0.0.0/0", "flowid", "1:20"])
+                "protocol", "ip", "prio", "1", "u32", "match", "ip", "dst", "0.0.0.0/0", "flowid", "1:11"])
         else:
             # prepare command array
             cmdArr = [
@@ -140,7 +114,7 @@ class Tc(object):
             # filter *everything* to it (0.0.0.0/0), drop everything that's
             # coming in too fast:
             _runcmd(["tc", "filter", "add", "dev", self.ifname, "parent", "ffff:",
-                "protocol", "ip", "prio", "50", "u32", "match", "ip", "src", "0.0.0.0/0", "police", "rate", str(self.down) + "kbit", "burst", "10k", "drop", "flowid", ":1"])
+                "protocol", "ip", "prio", "1", "u32", "match", "ip", "src", "0.0.0.0/0", "police", "rate", str(self.down) + "kbit", "burst", "10k", "drop", "flowid", ":1"])
 
     # resets all rules
     def removeAllRules(self):
